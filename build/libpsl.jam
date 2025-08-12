@@ -117,51 +117,11 @@ rule init (
             }
         }
 
-        # TODO: The following is a workaround for libpsl dependencies in
-        # static builds, and we need to address it.
-
-        local unistring = [ new ac-library unistring_ac : $(.project) : $(condition) :
-            $(include-path) : $(library-path) : ] ;
-        $(unistring).set-header unistr.h ;
-        $(unistring).set-default-names unistring ;
-        $(unistring).add-usage-requirements $(dll-paths) ;
-        targets.main-target-alternative
-            [ new alias-target-class unistring : $(.project)
-                : [ targets.main-target-sources unistring_ac : unistring : no-renaming ]
-                :
-                :
-                : [ targets.main-target-usage-requirements : $(.project) ]
-            ] ;
-
-        targets.main-target-alternative $(unistring) ;
-
-       local idn2 = [ new ac-library idn2_ac : $(.project) : $(condition) :
-            $(include-path) : $(library-path) : ] ;
-        $(idn2).set-header unistr.h ;
-        $(idn2).set-default-names idn2 ;
-        $(idn2).add-usage-requirements $(dll-paths) ;
-        targets.main-target-alternative
-            [ new alias-target-class idn2 : $(.project)
-                : [ targets.main-target-sources idn2_ac : idn2 : no-renaming ]
-                :
-                :
-                : [ targets.main-target-usage-requirements <library>unistring : $(.project) ]
-            ] ;
-
-        targets.main-target-alternative $(idn2) ;
-
-        local mt = [ new ac-library libpsl_ac : $(.project) : $(condition) :
+        local mt = [ new ac-library libpsl : $(.project) : $(condition) :
             $(include-path) : $(library-path) : $(library-name) ] ;
         $(mt).set-header $(header) ;
         $(mt).set-default-names $(names) ;
         $(mt).add-usage-requirements $(dll-paths) ;
-        targets.main-target-alternative
-            [ new alias-target-class libpsl : $(.project)
-                : [ targets.main-target-sources libpsl_ac : libpsl : no-renaming ]
-                :
-                :
-                : [ targets.main-target-usage-requirements <library>idn2 : $(.project) ]
-            ] ;
 
         targets.main-target-alternative $(mt) ;
     }
