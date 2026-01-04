@@ -149,6 +149,12 @@ function(boost_capy_setup_properties target)
     else ()
         target_compile_definitions(${target} PUBLIC BOOST_CAPY_STATIC_LINK)
     endif ()
+    # bcrypt requires platform-specific libraries
+    if (WIN32)
+        target_link_libraries(${target} PRIVATE bcrypt)
+    elseif (APPLE)
+        target_link_libraries(${target} PRIVATE "-framework Security")
+    endif ()
 endfunction()
 
 if (BOOST_CAPY_MRDOCS_BUILD)
@@ -159,22 +165,14 @@ if (BOOST_CAPY_MRDOCS_BUILD)
         "#include <boost/capy/brotli.hpp>\n")
     add_library(boost_capy_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
     boost_capy_setup_properties(boost_capy_mrdocs)
-    boost_capy_setup_properties(boost_capy_mrdocs PUBLIC BOOST_CAPY_MRDOCS)
+    target_compile_definitions(boost_capy_mrdocs PUBLIC BOOST_CAPY_MRDOCS)
     return()
 endif()
 
 # Complete dependency list
-
 add_library(boost_capy include/boost/capy.hpp build/Jamfile ${BOOST_CAPY_HEADERS} ${BOOST_CAPY_SOURCES})
 add_library(Boost::capy ALIAS boost_capy)
 boost_capy_setup_properties(boost_capy)
-
-# bcrypt requires platform-specific libraries
-if (WIN32)
-    target_link_libraries(boost_capy PRIVATE bcrypt)
-elseif (APPLE)
-    target_link_libraries(boost_capy PRIVATE "-framework Security")
-endif ()
 
 # Zlib
 find_package(ZLIB)

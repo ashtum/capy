@@ -23,7 +23,7 @@
 #elif defined(__linux__)
 #  include <sys/random.h>
 #elif defined(__APPLE__)
-#  include <Security/SecRandom.h>
+#  include <Security/Security.h>
 #else
 #  include <fcntl.h>
 #  include <unistd.h>

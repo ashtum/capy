@@ -49,6 +49,7 @@ jobs:
         uses: cppalliance/aws-hosted-runners@v1.0.0
 
   build:
+    if: false
     needs: [ runner-selection ]
     defaults:
       run:
